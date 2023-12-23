@@ -9,16 +9,10 @@ def search(request):
 
     # Define your SPARQL query to retrieve military information
     query = """
-        PREFIX dbres: <http://dbpedia.org/resource/>
-        PREFIX dbo: <http://dbpedia.org/ontology/>
-        
-        SELECT DISTINCT ?militaryResource ?militaryResourceLabel
+        SELECT ?commander
         WHERE {
-            ?militaryResource a dbo:MilitaryUnit .
-            ?militaryResource rdfs:label ?militaryResourceLabel
-            FILTER(LANG(?militaryResourceLabel) = "" || LANG(?militaryResourceLabel) = "en")
+            dbr:United_States_Armed_Forces dbp:commander ?commander.
         }
-        LIMIT 10
     """
 
     # Set the SPARQL query and execute it
@@ -26,12 +20,10 @@ def search(request):
     results = sparql.query().convert()
 
     # Extract relevant information from the query results
-    military_units = []
-    for result in results["results"]["bindings"]:
-        military_units.append(result["militaryResourceLabel"]["value"])
+    commanders = [result["commander"]["value"] for result in results["results"]["bindings"]]
 
     # Construct a response with the military units as content
-    response_content = "\n".join(military_units)
+    response_content = "\n".join(commanders)
     response = HttpResponse(response_content, content_type="text/plain")
 
     return response
