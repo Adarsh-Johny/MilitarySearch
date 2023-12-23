@@ -9,7 +9,7 @@ from quepy.rdfutils import get_first
 # Set the tagger
 quepy.set_tagger(get_tagger(False))
 
-# Define Quepy app
+# Define Quepy apppip3
 class MilitaryCamp(Fixed):
     fixed = "military camp"
 
