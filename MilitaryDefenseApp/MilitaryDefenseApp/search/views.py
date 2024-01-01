@@ -13,7 +13,7 @@ QUERY_MAP = {
             dbr:United_States_Armed_Forces dbp:commander ?commander.
         }
     """,
-    'us_army_commander': """
+    'chief_of_staff_usarmy': """
         SELECT ?description WHERE {
         dbr:Chief_of_Staff_of_the_United_States_Army rdfs:comment ?description FILTER (LANG(?description) = 'en')
         }
@@ -27,8 +27,8 @@ def search(request):
     
     if 'commander' in search_term and 'us army' in search_term:
         query_type = 'commanders'
-    elif 'commander' in search_term and 'us armed forces' in search_term:
-        query_type = 'us_army_commander'
+    elif 'chief of staff' in search_term:
+        query_type = 'chief_of_staff_usarmy'
     
     if query_type in QUERY_MAP:
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
@@ -37,7 +37,7 @@ def search(request):
         sparql.setQuery(sparql_query)
         results = sparql.query().convert()
         
-        if query_type == 'us_army_commander':
+        if query_type == 'chief_of_staff_usarmy':
             data = [result["description"]["value"] for result in results["results"]["bindings"]]
         else:
             data = [result["commander"]["value"] for result in results["results"]["bindings"] if "commander" in result]
