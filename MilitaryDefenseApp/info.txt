@@ -1,0 +1,2 @@
+If you wish to handle SPARQL queries manually without using the OpenAI API for natural language processing, you would typically create a more general and dynamic search functionality that allows users to query different types of military information from the DBpedia SPARQL endpoint.
+You can create a form on your website that lets users select the type of information they want to query (e.g., commanders, units, operations) and then generate the SPARQL query based on this input.
