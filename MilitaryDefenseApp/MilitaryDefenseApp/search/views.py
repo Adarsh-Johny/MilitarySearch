@@ -14,10 +14,10 @@ QUERY_MAP = {
         }
     """,
     'us_army_commander': """
-        SELECT ?name ?description WHERE {
-            dbr:Chief_of_Staff_of_the_United_States_Army dbp:name ?name .
-            OPTIONAL { dbr:Chief_of_Staff_of_the_United_States_Army rdfs:comment ?description FILTER (LANG(?description) = 'en') }
+        SELECT ?description WHERE {
+        dbr:Chief_of_Staff_of_the_United_States_Army rdfs:comment ?description FILTER (LANG(?description) = 'en')
         }
+
     """,
 }
 
@@ -38,7 +38,7 @@ def search(request):
         results = sparql.query().convert()
         
         if query_type == 'us_army_commander':
-            data = [result["name"]["value"] for result in results["results"]["bindings"]]
+            data = [result["description"]["value"] for result in results["results"]["bindings"]]
         else:
             data = [result["commander"]["value"] for result in results["results"]["bindings"] if "commander" in result]
         
