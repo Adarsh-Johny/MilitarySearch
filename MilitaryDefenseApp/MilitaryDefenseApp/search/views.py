@@ -25,7 +25,7 @@ def search(request):
     search_term = request.GET.get("query", '').lower().strip()
     query_type = ''
     
-    if 'commander' in search_term and 'us army' in search_term:
+    if 'commander' in search_term : # and 'us army' in search_term:
         query_type = 'commanders'
     elif 'chief of staff' in search_term:
         query_type = 'chief_of_staff_usarmy'
