@@ -35,11 +35,23 @@ QUERY_MAP = {
             dbr:United_States_Armed_Forces dbp:commander ?commander.
         }
     """,
-    # 'commanderinchief': """
-    #     SELECT ?commanderInChief WHERE {
-    #         dbr:United_States_Armed_Forces dbp:commanderInChief ?commanderInChief
-    #         }
-    # """,
+    'commanderInChief': """
+        SELECT ?commanderInChief WHERE {
+            dbr:United_States_Armed_Forces dbp:commanderInChief ?commanderInChief
+            }
+    """,
+    'minister': """
+        SELECT ?minister
+        WHERE {
+            dbr:United_States_Armed_Forces dbp:minister ?minister.
+        }
+    """,
+    'name': """
+        SELECT ?name
+        WHERE {
+            dbr:United_States_Armed_Forces dbp:name ?name.
+        }
+    """,
     # chief of staff info - is a sub branch
     'chief_of_staff_usarmy': """
         SELECT ?description WHERE {
@@ -61,11 +73,14 @@ def search(request):
         query_type = 'foundingDate'
     elif 'chief minister' in search_term : # and 'us army' in search_term:
         query_type = 'chiefMinister'
-    elif 'commander' in search_term : # and 'us army' in search_term:
+    elif 'commander' in search_term : 
         query_type = 'commander'
-    # elif 'commanderinchief' in search_term:
-    #     print("da")
-    #     query_type = 'commanderinchief'
+    elif 'chief of command' in search_term: 
+        query_type = 'commanderInChief'
+    elif 'minister' in search_term: 
+        query_type = 'minister'
+    elif 'name' in search_term: 
+        query_type = 'name'
     
         # chief of staff info - is a sub branch
     elif 'chief of staff' in search_term and 'description' in search_term:
@@ -95,8 +110,16 @@ def search(request):
             data = [result["chiefMinister"]["value"] for result in results["results"]["bindings"]]
         elif query_type == 'commander':
             data = [result["commander"]["value"] for result in results["results"]["bindings"]]
-        # elif query_type == 'commanderinchief':
-        #     data = [result["commanderinchief"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'commanderInChief':
+            data = [
+                result["commanderInChief"]["value"]
+                for result in results.get("results", {}).get("bindings", [])
+                if "commanderInChief" in result
+            ]
+        elif query_type == 'minister':
+            data = [result["minister"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'name':
+            data = [result["name"]["value"] for result in results["results"]["bindings"]]
             # chief of staff info - is a sub branch
         elif query_type == 'chief_of_staff_usarmy':
             data = [result["description"]["value"] for result in results["results"]["bindings"]]
