@@ -7,6 +7,17 @@ logger = logging.getLogger(__name__)
 
 
 QUERY_MAP = {
+    'abstract': """
+        SELECT ?abstract WHERE {
+            dbr:United_States_Armed_Forces dbo:abstract ?abstract FILTER (LANG(?abstract) = 'en')
+            }
+    """,
+    'ageRange': """
+        SELECT ?ageNumber WHERE {
+        dbr:United_States_Armed_Forces dbo:ageRange ?ageRange.
+        BIND(REPLACE(STR(?ageRange), "^^http://www.w3.org/2001/XMLSchema#nonNegativeInteger", "") AS ?ageNumber)
+        }
+    """,
     'commanders': """
         SELECT ?commander
         WHERE {
@@ -17,17 +28,21 @@ QUERY_MAP = {
         SELECT ?description WHERE {
         dbr:Chief_of_Staff_of_the_United_States_Army rdfs:comment ?description FILTER (LANG(?description) = 'en')
         }
-
     """,
+    
 }
 
 def search(request):
     search_term = request.GET.get("query", '').lower().strip()
     query_type = ''
     
-    if 'commander' in search_term : # and 'us army' in search_term:
+    if 'abstract' in search_term:
+        query_type = 'abstract'
+    elif 'age range' in search_term : # and 'us army' in search_term:
+        query_type = 'ageRange'
+    elif 'commander' in search_term : # and 'us army' in search_term:
         query_type = 'commanders'
-    elif 'chief of staff' in search_term:
+    elif 'chief of staff' in search_term and 'description' in search_term:
         query_type = 'chief_of_staff_usarmy'
     
     if query_type in QUERY_MAP:
@@ -37,8 +52,13 @@ def search(request):
         sparql.setQuery(sparql_query)
         results = sparql.query().convert()
         
-        if query_type == 'chief_of_staff_usarmy':
+        if query_type == 'abstract':
+            data = [result["abstract"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'chief_of_staff_usarmy':
             data = [result["description"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'ageRange':
+            data = [result.get("ageRange", {}).get("value", "No age range provided") for result in results["results"]["bindings"]]
+            data = [age.split("^^")[0] for age in data]
         else:
             data = [result["commander"]["value"] for result in results["results"]["bindings"] if "commander" in result]
         
