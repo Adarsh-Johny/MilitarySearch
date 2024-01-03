@@ -2,32 +2,88 @@ from django.http import HttpResponse
 from SPARQLWrapper import SPARQLWrapper, JSON
 from django.shortcuts import render
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
 
 QUERY_MAP = {
-    'commanders': """
+    'abstract': """
+        SELECT ?abstract WHERE {
+            dbr:United_States_Armed_Forces dbo:abstract ?abstract FILTER (LANG(?abstract) = 'en')
+            }
+    """,
+    'ageRange': """
+        SELECT ?ageNumber WHERE {
+        dbr:United_States_Armed_Forces dbo:ageRange ?ageRange.
+        BIND(REPLACE(STR(?ageRange), "^^http://www.w3.org/2001/XMLSchema#nonNegativeInteger", "") AS ?ageNumber)
+        }
+    """,
+    'foundingDate': """
+        SELECT ?foundingDate WHERE {
+            dbr:United_States_Armed_Forces dbo:foundingDate ?foundingDate
+            }
+    """,
+    'chiefMinister': """
+        SELECT ?chiefMinister WHERE {
+            dbr:United_States_Armed_Forces dbp:chiefMinister ?chiefMinister
+            }
+    """,
+    'commander': """
         SELECT ?commander
         WHERE {
             dbr:United_States_Armed_Forces dbp:commander ?commander.
         }
     """,
+    'commanderInChief': """
+        SELECT ?commanderInChief WHERE {
+            dbr:United_States_Armed_Forces dbp:commanderInChief ?commanderInChief
+            }
+    """,
+    'minister': """
+        SELECT ?minister
+        WHERE {
+            dbr:United_States_Armed_Forces dbp:minister ?minister.
+        }
+    """,
+    'name': """
+        SELECT ?name
+        WHERE {
+            dbr:United_States_Armed_Forces dbp:name ?name.
+        }
+    """,
+    # chief of staff info - is a sub branch
     'chief_of_staff_usarmy': """
         SELECT ?description WHERE {
         dbr:Chief_of_Staff_of_the_United_States_Army rdfs:comment ?description FILTER (LANG(?description) = 'en')
         }
-
     """,
+    
 }
 
 def search(request):
     search_term = request.GET.get("query", '').lower().strip()
     query_type = ''
     
-    if 'commander' in search_term : # and 'us army' in search_term:
-        query_type = 'commanders'
-    elif 'chief of staff' in search_term:
+    if 'abstract' in search_term:
+        query_type = 'abstract'
+    elif 'age range' in search_term : # and 'us army' in search_term:
+        query_type = 'ageRange'
+    elif 'founding date' in search_term : # and 'us army' in search_term:
+        query_type = 'foundingDate'
+    elif 'chief minister' in search_term : # and 'us army' in search_term:
+        query_type = 'chiefMinister'
+    elif 'commander' in search_term : 
+        query_type = 'commander'
+    elif 'chief of command' in search_term: 
+        query_type = 'commanderInChief'
+    elif 'minister' in search_term: 
+        query_type = 'minister'
+    elif 'name' in search_term: 
+        query_type = 'name'
+    
+        # chief of staff info - is a sub branch
+    elif 'chief of staff' in search_term and 'description' in search_term:
         query_type = 'chief_of_staff_usarmy'
     
     if query_type in QUERY_MAP:
@@ -37,10 +93,37 @@ def search(request):
         sparql.setQuery(sparql_query)
         results = sparql.query().convert()
         
-        if query_type == 'chief_of_staff_usarmy':
+        if query_type == 'abstract':
+            data = [result["abstract"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'ageRange':
+            data = []
+            for result in results["results"]["bindings"]:
+                age_range_value = result.get("ageNumber", {}).get("value", "")
+                match = re.search(r'\d+', age_range_value)
+                if match:
+                    data.append(match.group(0))
+                else:
+                    data.append('No age range provided')
+        elif query_type == 'foundingDate':
+            data = [result["foundingDate"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'chiefMinister':
+            data = [result["chiefMinister"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'commander':
+            data = [result["commander"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'commanderInChief':
+            data = [
+                result["commanderInChief"]["value"]
+                for result in results.get("results", {}).get("bindings", [])
+                if "commanderInChief" in result
+            ]
+        elif query_type == 'minister':
+            data = [result["minister"]["value"] for result in results["results"]["bindings"]]
+        elif query_type == 'name':
+            data = [result["name"]["value"] for result in results["results"]["bindings"]]
+            # chief of staff info - is a sub branch
+        elif query_type == 'chief_of_staff_usarmy':
             data = [result["description"]["value"] for result in results["results"]["bindings"]]
-        else:
-            data = [result["commander"]["value"] for result in results["results"]["bindings"] if "commander" in result]
+        
         
         if data:
                 return render(request, 'search.html', {'data': data})
