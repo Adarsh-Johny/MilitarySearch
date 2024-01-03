@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
@@ -21,9 +20,14 @@ class User(AbstractUser):
         _("Type"), max_length=50, choices=Types.choices, default=base_type
     )
 
-    # First Name and Last Name Do Not Cover Name Patterns
-    # Around the Globe.
-    name = models.CharField(_("Name of User"), blank=True, max_length=255)
+    #Adding some mutual fields for all users
+    rank = models.CharField(max_length=50)
+    unit = models.CharField(max_length=100)
+    gender = models.CharField(max_length=50)
+    dateEnlisted = models.CharField(max_length=50)
+    dateDischarged = models.CharField(max_length=50)
+    previousTraining = models.CharField(max_length=50)
+    awards = models.CharField(max_length=50)
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
@@ -47,16 +51,15 @@ class Soldier(User):
         proxy = True
 
 
-#Extend Soldier's model with additional information
+#Extend Soldier's model with additional fields
 class SoldierProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rank = models.CharField(max_length=50)
-    unit = models.CharField(max_length=100)
+    specialization = models.CharField(max_length=100)
 
 
 @receiver(post_save, sender=Soldier)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created and instance.role == "SOLDIER":
+    if created and instance.type == "SOLDIER":
         SoldierProfile.objects.create(user=instance)
 
 
@@ -72,17 +75,16 @@ class Commander(User):
 
     class Meta:
         proxy = True
-    
 
+
+#Extend Commander's model with additional fields
 class CommanderProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rank = models.CharField(max_length=50)
-    unit = models.CharField(max_length=100)
     responsibility = models.CharField(max_length=100)
 
 
 @receiver(post_save, sender=Commander)
 def create_user_profile(sender, instance, created, **kwargs):
-    if created and instance.role == "COMMANDER":
+    if created and instance.type == "COMMANDER":
         CommanderProfile.objects.create(user=instance)
 
