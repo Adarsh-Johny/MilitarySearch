@@ -1,46 +1,46 @@
+# your_app/admin.py
+
 from django.contrib import admin
-from users.models import User
-from users.models import SoldierProfile, CommanderProfile
-from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
-from .forms import CustomUserCreationForm
+from django.contrib.auth.admin import UserAdmin
+from .models import User, Soldier, Commander, SoldierProfile, CommanderProfile
 
-
-class SoldierProfileInline(admin.StackedInline):
+class UserProfileInline(admin.StackedInline):
     model = SoldierProfile
     can_delete = False
+    verbose_name_plural = 'Soldier Profile'
 
 class CommanderProfileInline(admin.StackedInline):
     model = CommanderProfile
     can_delete = False
+    verbose_name_plural = 'Commander Profile'
 
-class AccountsUserAdmin(AuthUserAdmin):
-    # form = CustomUserCreationForm
-    # add_form = CustomUserCreationForm
-    # fieldsets =  AuthUserAdmin.fieldsets
-    # # list_display = ["username", "name", "is_superuser"]
+class CustomUserAdmin(UserAdmin):
+    fieldsets = (
+        *UserAdmin.fieldsets,
+        (
+            'Additional Information',
+            {
+                'fields': (
+                    'rank',
+                    'unit',
+                    'gender',
+                    'dateEnlisted',
+                    'dateDischarged',
+                    'previousTraining',
+                    'awards',
+                ),
+            },
+        ),
+    )
 
-
-    inlines = [SoldierProfileInline]
-    commander_inlines = [CommanderProfileInline]
-    user_inlines = []
     def get_inlines(self, request, obj):
-            if obj.type == "SOLDIER":
-               return self.inlines
-            elif obj.type == "COMMANDER":
-               return self.other_set_of_inlines
-            else:
-               return self.user_inlines
+        if obj.type == User.Types.SOLDIER:
+            return [UserProfileInline]
+        elif obj.type == User.Types.COMMANDER:
+            return [CommanderProfileInline]
+        return super().get_inlines(request, obj)
 
-    def add_view(self, *args, **kwargs):
-        self.inlines =[]
-        return super(AccountsUserAdmin, self).add_view(*args, **kwargs)
-
-    def change_view(self,*args, **kwargs):
-        return super(AccountsUserAdmin, self).change_view(*args, **kwargs)
-
-
-# admin.site.register(User)
-admin.site.register(User, AccountsUserAdmin)
-
-
-
+# Register your models with the custom admin class
+admin.site.register(User, CustomUserAdmin)
+admin.site.register(Soldier)
+admin.site.register(Commander)
