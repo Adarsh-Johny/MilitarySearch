@@ -16,3 +16,10 @@ GET http://127.0.0.1:8000/test_token
 Content-Type: application/json Authorization: token xxx
 
 {}
+
+###Users api test Request
+
+POST http://127.0.0.1:5000/api/auth
+Content-Type: application/json
+
+{ "username": "admin", "password": "admin" }
