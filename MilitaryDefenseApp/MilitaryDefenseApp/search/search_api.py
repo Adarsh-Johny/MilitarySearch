@@ -1,11 +1,9 @@
-from flask import Flask, request, jsonify
-from query_processor import execute_search
-from flask_cors import CORS
+from flask import Blueprint, request, jsonify
+from MilitaryDefenseApp.search.query_processor import execute_search
 
-app = Flask(__name__)
-CORS(app, origins='*')  # Enable CORS for all origins
+search_blueprint = Blueprint('search', __name__)
 
-@app.route('/api/search', methods=['POST'])
+@search_blueprint.route('/', methods=['POST'])
 def api():
     data = request.json
 
@@ -25,6 +23,3 @@ def api():
         # If any of the required fields is missing, return an error response
         error_response = {"error": "Missing required fields"}
         return jsonify(error_response), 400
-
-if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)

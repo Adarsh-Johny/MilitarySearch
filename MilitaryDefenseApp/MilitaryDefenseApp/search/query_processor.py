@@ -1,8 +1,7 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
-from query_mappings import QUERY_MAP
+from MilitaryDefenseApp.search.query_mappings import QUERY_MAP
 
 import logging
-import re
 
 logger = logging.getLogger(__name__)
 
