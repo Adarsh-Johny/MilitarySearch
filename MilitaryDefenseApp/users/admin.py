@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, Soldier, Commander, SoldierProfile, CommanderProfile
+from .models import User, Soldier, Commander, SoldierProfile, CommanderProfile, MilitaryCamp
 
 class UserProfileInline(admin.StackedInline):
     model = SoldierProfile
@@ -40,7 +40,13 @@ class CustomUserAdmin(UserAdmin):
             return [CommanderProfileInline]
         return super().get_inlines(request, obj)
 
+class MilitaryCampAdmin(admin.ModelAdmin):
+    list_display = ('location', 'latitude', 'longitude', 'executes_action', 'status', 'service_branch')
+    search_fields = ('location', 'service_branch')
+
 # Register your models with the custom admin class
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Soldier)
 admin.site.register(Commander)
+admin.site.register(MilitaryCamp)
+
