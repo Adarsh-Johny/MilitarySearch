@@ -33,12 +33,12 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-    def get_inlines(self, request, obj):
-        if obj.type == User.Types.SOLDIER:
+    def get_inline_instances(self, request, obj):
+        if obj and obj.type == User.Types.SOLDIER:
             return [UserProfileInline]
-        elif obj.type == User.Types.COMMANDER:
+        elif obj and obj.type == User.Types.COMMANDER:
             return [CommanderProfileInline]
-        return super().get_inlines(request, obj)
+        return super().get_inline_instances(request, obj)
 
 class MilitaryCampAdmin(admin.ModelAdmin):
     list_display = ('location', 'latitude', 'longitude', 'executes_action', 'status', 'service_branch')
