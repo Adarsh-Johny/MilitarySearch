@@ -1,53 +1,62 @@
-# your_app/admin.py
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User, Soldier, Commander, SoldierProfile, CommanderProfile, MilitaryCamp
 
-class UserProfileInline(admin.StackedInline):
+# Define the inline profiles for Soldier and Commander
+class SoldierProfileInline(admin.StackedInline):
     model = SoldierProfile
     can_delete = False
-    verbose_name_plural = 'Soldier Profile'
+    fields = ('specialization',)  # Add more fields as needed
+
 
 class CommanderProfileInline(admin.StackedInline):
     model = CommanderProfile
     can_delete = False
-    verbose_name_plural = 'Commander Profile'
+    fields = ('responsibility',)  # Add more fields as needed
 
-class CustomUserAdmin(UserAdmin):
+
+# Custom UserAdmin for Soldier
+class SoldierAdmin(UserAdmin):
+    inlines = [SoldierProfileInline]
+    list_display = (
+        'username', 'email', 'first_name', 'last_name', 'type', 'rank', 'unit',
+        'gender', 'dateEnlisted', 'dateDischarged', 'previousTraining', 'awards'
+    )
     fieldsets = (
-        *UserAdmin.fieldsets,
-        (
-            'Additional Information',
-            {
-                'fields': (
-                    'type',
-                    'rank',
-                    'unit',
-                    'gender',
-                    'dateEnlisted',
-                    'dateDischarged',
-                    'previousTraining',
-                    'awards',
-                ),
-            },
-        ),
+        (None, {'fields': ('username', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'email', 'type', 'rank', 'unit', 'gender', 'dateEnlisted', 'dateDischarged', 'previousTraining', 'awards')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
 
-    def get_inline_instances(self, request, obj):
+    def get_inline_instances(self, request, obj=None):
         if obj and obj.type == User.Types.SOLDIER:
-            return [UserProfileInline]
-        elif obj and obj.type == User.Types.COMMANDER:
-            return [CommanderProfileInline]
+            return [SoldierProfileInline(self.model, self.admin_site)]
         return super().get_inline_instances(request, obj)
 
-class MilitaryCampAdmin(admin.ModelAdmin):
-    list_display = ('location', 'latitude', 'longitude', 'executes_action', 'status', 'service_branch')
-    search_fields = ('location', 'service_branch')
 
-# Register your models with the custom admin class
-admin.site.register(User, CustomUserAdmin)
-admin.site.register(Soldier)
-admin.site.register(Commander)
+# Custom UserAdmin for Commander
+class CommanderAdmin(UserAdmin):
+    inlines = [CommanderProfileInline]
+    list_display = (
+        'username', 'email', 'first_name', 'last_name', 'type', 'rank', 'unit',
+        'gender', 'dateEnlisted', 'dateDischarged', 'previousTraining', 'awards'
+    )
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'email', 'type', 'rank', 'unit', 'gender', 'dateEnlisted', 'dateDischarged', 'previousTraining', 'awards')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+    )
+
+    def get_inline_instances(self, request, obj=None):
+        if obj and obj.type == User.Types.COMMANDER:
+            return [CommanderProfileInline(self.model, self.admin_site)]
+        return super().get_inline_instances(request, obj)
+
+
+# Register the models and admin classes
+admin.site.register(User, UserAdmin)
+admin.site.register(Soldier, SoldierAdmin)
+admin.site.register(Commander, CommanderAdmin)
 admin.site.register(MilitaryCamp)
-
