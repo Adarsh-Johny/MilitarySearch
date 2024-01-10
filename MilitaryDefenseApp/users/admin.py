@@ -21,6 +21,7 @@ class CustomUserAdmin(UserAdmin):
             'Additional Information',
             {
                 'fields': (
+                    'type',
                     'rank',
                     'unit',
                     'gender',
