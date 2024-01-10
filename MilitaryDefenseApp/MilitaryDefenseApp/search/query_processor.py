@@ -8,23 +8,23 @@ logger = logging.getLogger(__name__)
 def execute_search(search_term):
     query_type = ''
 
-    if 'abstract' in search_term and 'usa armed forces' in search_term: #Usa related queries
+    if 'abstract' in search_term: #Usa related queries
         query_type = 'abstract'
-    elif 'age range' in search_term and 'usa armed forces' in search_term:
+    elif 'age range' in search_term:
         query_type = 'ageRange'
-    elif 'founding date' in search_term and 'usa armed forces' in search_term:
+    elif 'founding date' in search_term:
         query_type = 'foundingDate'
-    elif 'chief minister' in search_term and 'usa armed forces' in search_term:
+    elif 'chief minister' in search_term:
         query_type = 'chiefMinister'
-    elif 'commander' in search_term and 'usa armed forces' in search_term:
+    elif 'commander' in search_term:
         query_type = 'commander'
-    elif 'chief of command' in search_term and 'usa armed forces' in search_term:
+    elif 'chief of command' in search_term:
         query_type = 'commanderInChief'
-    elif 'minister' in search_term and 'usa armed forces' in search_term:
+    elif 'minister' in search_term:
         query_type = 'minister'
-    elif 'name' in search_term and 'usa armed forces' in search_term:
+    elif 'name' in search_term:
         query_type = 'name'
-    elif 'chief of staff' in search_term and 'description' in search_term and 'usa armed forces' in search_term:
+    elif 'chief of staff' in search_term and 'description' in search_term:
         query_type = 'chief_of_staff_usarmy'
 
     
