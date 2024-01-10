@@ -88,3 +88,23 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created and instance.type == "COMMANDER":
         CommanderProfile.objects.create(user=instance)
 
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+class MilitaryCamp(models.Model):
+    class Status(models.TextChoices):
+        ACTIVE = "ACTIVE", "Active"
+        INACTIVE = "INACTIVE", "Inactive"
+
+    class ServiceBranch(models.TextChoices):
+        ARMY = "ARMY", "Army"
+        NAVY = "NAVY", "Navy"
+        AIR_FORCE = "AIR_FORCE", "Air Force"
+
+    location = models.CharField(_("Location"), max_length=50)
+    latitude = models.FloatField(_("Latitude"))
+    longitude = models.FloatField(_("Longitude"))
+    executes_action = models.CharField(_("Executes Action"), max_length=50)
+    status = models.CharField(_("Status"), max_length=50, choices=Status.choices, default=Status.ACTIVE)
+    service_branch = models.CharField(_("Service Branch"), max_length=50, choices=ServiceBranch.choices)
+
