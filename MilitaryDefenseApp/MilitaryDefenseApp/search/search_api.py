@@ -1,12 +1,10 @@
 from SPARQLWrapper import JSON, SPARQLWrapper
-from flask import Flask, request, jsonify
-from query_processor import execute_search
-from flask_cors import CORS
+from flask import Blueprint, request, jsonify
+from MilitaryDefenseApp.search.query_processor import execute_search
 
-app = Flask(__name__)
-CORS(app, origins='*')  # Enable CORS for all origins
+search_blueprint = Blueprint('search', __name__)
 
-@app.route('/api/search', methods=['POST'])
+@search_blueprint.route('/search', methods=['POST'])
 def api():
     data = request.json
 
@@ -27,10 +25,8 @@ def api():
         error_response = {"error": "Missing required fields"}
         return jsonify(error_response), 400
 
-
-@app.route('/api/list', methods=['GET'])
-def api_country_wise_list():
-    
+@search_blueprint.route('/list', methods=['GET'])
+def api_country_wise_list():  
     sparql = SPARQLWrapper("http://dbpedia.org/sparql")
     sparql.setReturnFormat(JSON)
 
@@ -58,6 +54,3 @@ def api_country_wise_list():
         military_forces_list.append({"Country": country, "Url": military_force})
 
     return jsonify(military_forces_list)
-
-if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000)

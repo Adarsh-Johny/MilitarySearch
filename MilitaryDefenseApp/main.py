@@ -8,8 +8,8 @@ def create_app():
     CORS(app, origins='*')
 
     # Register the blueprints
-    app.register_blueprint(search_blueprint, url_prefix='/api/search')
-    app.register_blueprint(user_blueprint, url_prefix='/api/user')
+    app.register_blueprint(search_blueprint, url_prefix='/api/')
+    app.register_blueprint(user_blueprint, url_prefix='/api/')
 
     return app
 
