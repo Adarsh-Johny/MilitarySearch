@@ -49,88 +49,52 @@ QUERY_MAP = {
         dbr:Chief_of_Staff_of_the_United_States_Army rdfs:comment ?description FILTER (LANG(?description) = 'en')
         }
     """,
-    #British army
-    'br_abstract': """
-        SELECT ?abstract WHERE {
-            dbr:British_Army dbo:abstract ?abstract FILTER (LANG(?abstract) = 'en')
-            }
+    'us_headquarters': """
+        SELECT (STRAFTER(STR(?headquarters), "http://dbpedia.org/resource/") AS ?headquarters) (STRAFTER(STR(?location), "http://dbpedia.org/resource/") AS ?location) WHERE {
+        dbr:United_States_Armed_Forces dbp:headquarters ?headquarters.
+        ?headquarters dbo:location ?location
+        } LIMIT 1
     """,
-    #Alternatively use dbp:size
-    'br_militarySize': """
-        SELECT ?militarySize WHERE {
-            dbr:British_Army dbo:militaryUnitSize ?militarySize 
-            }
-    """,
-    'br_commander': """
-        SELECT ?commander WHERE {
-            dbr:United_States_Armed_Forces dbp:commander ?commander.
+    'Lebanon_crisis': """
+        SELECT ?abstract ?causalties ?date WHERE {
+        dbr:1958_Lebanon_crisis dbo:abstract ?abstract FILTER (LANG(?abstract) = 'en').
+        dbr:1958_Lebanon_crisis dbo:causalties ?causalties.
+        dbr:1958_Lebanon_crisis dbp:date ?date .
         }
+
+    """, #Last three queries not working properly
+    'us_commandStructure': """ 
+        SELECT ?branch ?commandStructure WHERE {
+        VALUES ?branch {
+        dbr:United_States_Air_Force
+        dbr:United_States_Army
+        dbr:United_States_Coast_Guard
+        dbr:United_States_Marine_Corps
+        dbr:United_States_Navy
+        dbr:United_States_Space_Force
+        }
+
+        ?branch dbo:commandStructure ?commandStructure.
+        }
+
     """,
-    'br_startDate': """
-        SELECT ?startDate WHERE {
-            dbr:British_Army dbp:startDate ?startDate  
-            }
+    'American_Civil_War': """
+        SELECT DISTINCT ?abstract ?date ?causalties ?results
+        WHERE {
+        dbr:American_Civil_War dbo:abstract ?abstract FILTER (LANG(?abstract) = 'en').
+        OPTIONAL { dbr:American_Civil_War dbo:date ?date }.
+        OPTIONAL { dbr:American_Civil_War dbo:causalties ?causalties }.
+        OPTIONAL { dbr:American_Civil_War dbo:result ?results }.
+        }
+
     """,
-    #Italian army
-    'it_abstract': """
-        SELECT ?commander WHERE {
-            dbr:Italian_Armed_Forces dbp:commander ?commander 
-            }
-    """,
-    'it_foundingDate': """
-        SELECT ?foundingDate WHERE {
-            dbr:Italian_Armed_Forces dbo:foundingDate ?foundingDate   
-            }
-    """,
-    'it_commander': """
-        SELECT ?commander WHERE {
-            dbr:Italian_Armed_Forces dbp:commander ?commander 
-            }
-    """,
-    'it_chiefMinister': """
-        SELECT ?chiefMinister WHERE {
-            dbr:Italian_Armed_Forces dbp:chiefMinister ?chiefMinister 
-            }
-    """,
-    'it_commanderInChief': """
-        SELECT ?commanderInChief WHERE {
-            dbr:Italian_Armed_Forces dbp:commanderInChief ?commanderInChief 
-            }
-    """,
-    'it_commandStructure ': """
-        SELECT  (STRAFTER(STR(?branch), "http://dbpedia.org/resource/") AS ?branchLabel) WHERE {
-            VALUES ?branch { dbr:Italian_Air_Force dbr:Italian_Army dbr:Italian_Navy }
-            ?branch dbo:commandStructure ?commandStructure.
-            }
-    """,
-    #Indian army
-    'ind_militaryUnitSize': """
-        SELECT ?militaryUnitSize WHERE {
-            dbr:Indian_Army dbo:militaryUnitSize ?militaryUnitSize .
-            }
-            ORDER BY DESC(?militaryUnitSize)
-            OFFSET 1
-            LIMIT 2
-    """,
-    'ind_commander': """
-        SELECT ?commander WHERE {
-            dbr:Indian_Army dbp:commander ?commander.
-            }
-    """,
-    #Battles
-    'Russian_Civil_War': """
-        SELECT ?result WHERE {
-            dbr:Allied_intervention_in_the_Russian_Civil_War dbp:result ?result .
-            }
-    """,
-    'Vietnam_War_abstract': """
-        SELECT ?abstract WHERE {
-            dbr:Vietnam_War dbo:abstract ?abstract FILTER (LANG(?abstract ) = 'en')
-            }
-    """,
-    'Cold_War_comment': """
-        SELECT ?comment WHERE {
-            dbr:Cold_War rdfs:comment ?comment FILTER (LANG(?comment ) = 'en')
-            }
+    'War_of_1812': """
+        SELECT DISTINCT ?abstract ?date ?causalties ?results WHERE {
+        dbr:War_of_1812 dbo:abstract ?abstract FILTER (LANG(?abstract) = 'en').
+        OPTIONAL { dbr:War_of_1812 dbo:date ?date }.
+        OPTIONAL { dbr:War_of_1812 dbo:causalties ?causalties }.
+        OPTIONAL { dbr:War_of_1812 dbo:result ?results }.
+        }
     """
+
 }

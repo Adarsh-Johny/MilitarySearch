@@ -26,36 +26,7 @@ def execute_search(search_term):
         query_type = 'name'
     elif 'chief of staff' in search_term and 'description' in search_term and 'usa armed forces' in search_term:
         query_type = 'chief_of_staff_usarmy'
-    elif 'abstract' in search_term and 'british armed forces' in search_term: #Britain related queries
-        query_type = 'br_abstract'
-    elif 'military size' in search_term and 'british armed forces' in search_term:
-        query_type = 'br_militarySize'
-    elif 'commander' in search_term and 'british armed forces' in search_term:
-        query_type = 'br_commander'
-    elif 'start date' in search_term and 'british armed forces' in search_term:
-        query_type = 'br_startDate'
-    elif 'abstract' in search_term and 'italian armed forces' in search_term: #Italy related queries
-        query_type = 'it_abstract'
-    elif 'founding date' in search_term and 'italian armed forces' in search_term:
-        query_type = 'it_foundingDate'
-    elif 'commander' in search_term and 'italian armed forces' in search_term:
-        query_type = 'it_commander'
-    elif 'chief minister' in search_term and 'italian armed forces' in search_term:
-        query_type = 'it_chiefMinister'
-    elif 'commander in chief' in search_term and 'italian armed forces' in search_term:
-        query_type = 'it_commanderInChief'
-    elif 'structure' in search_term and 'italian armed forces' in search_term:
-        query_type = 'it_commandStructure'
-    elif 'military size' in search_term and 'indian armed forces' in search_term: #India related queries
-        query_type = 'ind_militaryUnitSize'
-    elif 'commander' in search_term and 'indian armed forces' in search_term:
-        query_type = 'ind_commander'
-    elif 'Russian Civil War' in search_term and 'result' in search_term: #Battles and operations queries
-        query_type = 'Russian_Civil_War'
-    elif 'Vietnam War' in search_term and 'description' in search_term:
-        query_type = 'Vietnam_War_abstract'
-    elif 'Cold War' in search_term and 'description' in search_term:
-        query_type = 'Cold_War_comment'
+
     
     
 
