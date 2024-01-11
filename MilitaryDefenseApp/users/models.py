@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-
 class User(AbstractUser):
     class Types(models.TextChoices):
         
@@ -100,7 +99,7 @@ class MilitaryCamp(models.Model):
         ARMY = "ARMY", "Army"
         NAVY = "NAVY", "Navy"
         AIR_FORCE = "AIR_FORCE", "Air Force"
-
+    id =models.IntegerField(_("Id"), primary_key=True)
     location = models.CharField(_("Location"), max_length=50)
     latitude = models.FloatField(_("Latitude"))
     longitude = models.FloatField(_("Longitude"))
