@@ -12,6 +12,7 @@ install following packages
     6. `SQLAlchemy`
     7. `flask_restful`
     8. `django`
+    9. `certifi`
 
 # Build and Test
 

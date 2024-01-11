@@ -4,22 +4,20 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth import get_user_model
 
 class User(AbstractUser):
     class Types(models.TextChoices):
-        
         ADMIN = "ADMIN", "Admin"
         SOLDIER = "SOLDIER", "Soldier"
         COMMANDER = "COMMANDER", "Commander"
 
     base_type = Types.ADMIN
 
-    # What type of user are we?
     type = models.CharField(
         _("Type"), max_length=50, choices=Types.choices, default=base_type
     )
 
-    #Adding some mutual fields for all users
     rank = models.CharField(max_length=50)
     unit = models.CharField(max_length=100)
     gender = models.CharField(max_length=50)
@@ -47,21 +45,19 @@ class Soldier(User):
     class Meta:
         proxy = True
 
-#Extend Soldier's model with additional fields
 class SoldierProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     specialization = models.CharField(max_length=100)
 
-
-@receiver(post_save, sender=Soldier)
-def create_user_profile(sender, instance, created, **kwargs):
+@receiver(post_save, sender=get_user_model())
+def create_soldier_profile(sender, instance, created, **kwargs):
     if created and instance.type == "SOLDIER":
         SoldierProfile.objects.get_or_create(user=instance)
 
 class CommanderManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset(*args, **kwargs).filter(type=User.Types.COMMANDER)
-    
+
 class Commander(User):
     base_type = User.Types.COMMANDER
     commander = CommanderManager()
@@ -70,9 +66,11 @@ class Commander(User):
         proxy = True
 
 class CommanderProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     responsibility = models.CharField(max_length=100)
 
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
 
 @receiver(post_save, sender=Commander)
 def create_user_profile(sender, instance, created, **kwargs):
