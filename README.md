@@ -1,27 +1,27 @@
-# Introduction
-
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.
-
 # Getting Started
 
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
+# installations
 
-1. Installation process
-2. Software dependencies
-3. Latest releases
-4. API references
+Download and install python `https://www.python.org/downloads/`
+install following packages
+    1. `djangorestframework`
+    2. `Flask`
+    3. `Flask-Cors`
+    4. `Flask-SQLAlchemy`
+    5. `SPARQLWrapper`
+    6. `SQLAlchemy`
+    7. `flask_restful`
+    8. `django`
 
 # Build and Test
 
-Must be in the first folder MilitaryDefenseApp (the main one) and run the command: python manage.py runserver
-TODO: Describe and show how to build your code and run the tests.
+Go to MilitaryDefenseApp folder
+Run `manage.py makemigrations` for creating migrations of database changes
+Run `manage.py runmigrations` for executing database migrations to the database
+Run `manage.py createsuperuser` for creating initial super admin(give username, password, and other information)
 
-# Contribute
+Run `manage.py runserver` for running the Django server(`http://localhost:8000/admin`)
 
-TODO: Explain how other users and developers can contribute to make your code better.
+Go to `http://localhost:8000/admin` and login with the super admin created and add users, soldiers, commanders and army camps.
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+Run `python main.py` for running the API server(`http://localhost:5000/`)

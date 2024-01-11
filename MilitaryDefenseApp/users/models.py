@@ -36,11 +36,9 @@ class User(AbstractUser):
             self.type = self.base_type
         return super().save(*args, **kwargs)
 
-
 class SoldierManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset(*args, **kwargs).filter(type=User.Types.SOLDIER)
-
 
 class Soldier(User):
     base_type = User.Types.SOLDIER
@@ -48,7 +46,6 @@ class Soldier(User):
 
     class Meta:
         proxy = True
-
 
 #Extend Soldier's model with additional fields
 class SoldierProfile(models.Model):
@@ -59,15 +56,12 @@ class SoldierProfile(models.Model):
 @receiver(post_save, sender=Soldier)
 def create_user_profile(sender, instance, created, **kwargs):
     if created and instance.type == "SOLDIER":
-        SoldierProfile.objects.create(user=instance)
-
+        SoldierProfile.objects.get_or_create(user=instance)
 
 class CommanderManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         return super().get_queryset(*args, **kwargs).filter(type=User.Types.COMMANDER)
-#Extend Commander's model with additional information
     
-
 class Commander(User):
     base_type = User.Types.COMMANDER
     commander = CommanderManager()
@@ -75,8 +69,6 @@ class Commander(User):
     class Meta:
         proxy = True
 
-
-#Extend Commander's model with additional fields
 class CommanderProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     responsibility = models.CharField(max_length=100)
@@ -85,7 +77,7 @@ class CommanderProfile(models.Model):
 @receiver(post_save, sender=Commander)
 def create_user_profile(sender, instance, created, **kwargs):
     if created and instance.type == "COMMANDER":
-        CommanderProfile.objects.create(user=instance)
+        CommanderProfile.objects.get_or_create(user=instance)
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -106,4 +98,3 @@ class MilitaryCamp(models.Model):
     executes_action = models.CharField(_("Executes Action"), max_length=50)
     status = models.CharField(_("Status"), max_length=50, choices=Status.choices, default=Status.ACTIVE)
     service_branch = models.CharField(_("Service Branch"), max_length=50, choices=ServiceBranch.choices)
-
