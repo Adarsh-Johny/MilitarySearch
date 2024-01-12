@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 def execute_search(search_term):
     query_type = ''
 
-    if 'abstract' in search_term: #Usa related queries
+    if 'abstract' in search_term or 'description' in search_term or 'information' in search_term: #Usa related queries
         query_type = 'abstract'
     elif 'age range' in search_term:
         query_type = 'ageRange'
